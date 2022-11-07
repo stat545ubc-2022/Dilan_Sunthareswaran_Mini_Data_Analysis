@@ -484,7 +484,7 @@ print(unts_dstrbtn)
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](Test_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 It is always good practice to **name our plots** rather than simply
 outputting them onto the file. This will make it much easier to come
@@ -508,7 +508,7 @@ print(unts_prkng_plt)
 
     ## Warning: Removed 123 rows containing missing values (geom_point).
 
-![](Test_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 Upon examination of the plot, it is clear that **one** apartment has
 4000 units, which makes it difficult to examine the relationship.
@@ -526,7 +526,7 @@ print(unts_prkng_n4K_plt)
 
     ## Warning: Removed 123 rows containing missing values (geom_point).
 
-![](Test_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Here, we used the pipe (*%\>%*) to condense our code. This can be
 interpreted as “and then” as you are reading the code. This approach
@@ -547,7 +547,7 @@ print(unts_prkng_n4K_plt_2)
 
     ## Warning: Removed 123 rows containing missing values (geom_point).
 
-![](Test_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 As you can see, both approaches produce the exact same plot, but the
 former is preferred given its conciseness and prevents you from
@@ -566,7 +566,7 @@ parking_property_boxplot <- ggplot(apt_buildings_no4K, aes(property_type, no_of_
 print(parking_property_boxplot)
 ```
 
-![](Test_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
 ### 4th selected task: Use a density plot to explore any of your variables
 
@@ -582,7 +582,7 @@ print(Acc_parking_density)
 
     ## Warning: Removed 123 rows containing non-finite values (stat_density).
 
-![](Test_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 <!----------------------------------------------------------------------------->
 
 # Task 3: Write your research questions (5 points)
@@ -757,7 +757,7 @@ print(yr_blt_vstr_prkng)
 
     ## Warning: Removed 2 rows containing missing values (geom_point).
 
-![](Test_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 **Why this task helps:** This graphing tasks helps show that the year
 built does have an influence on the type of visitor parking. The medians
@@ -862,7 +862,7 @@ print(strys_unts_prpty)
 
     ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
 
-![](Test_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 **Why this task helps:** This graphing task helps show that a linear
 relationship between the number of stories and the number of units is
@@ -920,7 +920,7 @@ print(pts_allwd_yr_blt)
 
     ## Warning: Removed 2 rows containing missing values (geom_point).
 
-![](Test_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 **Why this task helps:** This graph shows that there is not much of a
 difference between the year built and its allowance of pets. In other
@@ -1047,7 +1047,7 @@ combined_hist <- plot_grid(unit_hist_bin1, unit_hist_bin5, unit_hist_bin10, nrow
 print(combined_hist)
 ```
 
-![](Test_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
 
 Among the 3 histograms (A = bin-width 1, B = bin-width 5, C = bin-width
 10), the bin-width of 10 is the ‘best’ one because it has the best
@@ -1058,7 +1058,7 @@ the graph.
 print(unit_hist_bin10)
 ```
 
-![](Test_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+![](mini-project-1_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
 
 **Why this task helps:** This histogram shows how the visitor parking
 status can vary based on the number of units. For example, this graph
