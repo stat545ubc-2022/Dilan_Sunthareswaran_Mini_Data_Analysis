@@ -61,7 +61,18 @@ A reminder of the definition of *tidy* data:
 Based on the definition above, can you identify if your data is tidy or untidy? Go through all your columns, or if you have \>8 variables, just pick 8, and explain whether the data is untidy or tidy.
 
 <!--------------------------- Start your work below --------------------------->
-We can look at the apt_buildings dataset, given that there are >8 variables, we will `select` 
+We can look at the apt_buildings dataset, given that there are >8 variables, we will `select` 8 variables to examine. The 8 variables are: id, air_conditioning, balconies, exterior_fire_escape, fire_alarm, garbage_chutes, laundry_room, no_of_elevators. 
+
+```{r}
+tidy_apt_buildings <- apt_buildings %>% 
+                          select(id, air_conditioning, balconies, exterior_fire_escape, fire_alarm, garbage_chutes, laundry_room, no_of_elevators) %>%
+     filter(!is.na(balconies))
+
+print(tidy_apt_buildings)
+```
+
+Based off these 8 rows, the data is tidy because of the three principles it follows: 1. Every variable has its own column. 2. Every observation has its own row. 3. Each value has its own cell. 
+
 <!----------------------------------------------------------------------------->
 
 ### 2.2 (5 points)
@@ -73,7 +84,24 @@ If your data is untidy, then tidy it! Then, untidy it back to it's original stat
 Be sure to explain your reasoning for this task. Show us the "before" and "after".
 
 <!--------------------------- Start your work below --------------------------->
+Since our dataset is tidy, we will be using the `pivot_wider` function to untidy the data. This will widen the dataset and have a separate column for each observation of the balconies variable (YES, NO), this column will take show the values of the no_of_elevators. 
 
+```{r}
+untidy_apt_buildings <- tidy_apt_buildings %>% 
+                      pivot_wider(names_from = balconies,
+                                  values_from = no_of_elevators)
+print(untidy_apt_buildings)
+```
+
+We can use the `pivot_longer` function to retidy the data and make it look like our original tidy_apt_buildings dataset. Using the print function, we can compare the two datasets and see that they are the same. 
+```{r}
+new_tidy_apt_buildings <- untidy_apt_buildings %>%
+                      pivot_longer(cols = c(YES, NO),
+                                           names_to = "balconies",
+                                           values_to = "no_of_elevators") 
+print(new_tidy_apt_buildings)
+print(tidy_apt_buildings)
+```
 <!----------------------------------------------------------------------------->
 
 ### 2.3 (7.5 points)
@@ -82,21 +110,33 @@ Now, you should be more familiar with your data, and also have made progress in 
 
 <!-------------------------- Start your work below ---------------------------->
 
-1.  *FILL_THIS_IN*
-2.  *FILL_THIS_IN*
+1.  *Are there differences between apartment age (based on year built) that allow and don't allow pets? *
+2.  *How does property type influence the number of stories in an apartment, and the relationship between stories and units?*
 
 <!----------------------------------------------------------------------------->
 
 Explain your decision for choosing the above two research questions.
 
 <!--------------------------- Start your work below --------------------------->
-
+These two research questions are the most interesting and also offer multiple approaches to answering/visualizing the research question. Research question 2 also already has a plot made using faceting (comparing 3 variables), which is helpful for Task 2. I also think it is helpful to have a simple (research question 1) and a more complicated (research question 2) research question. 
 <!----------------------------------------------------------------------------->
 
 Now, try to choose a version of your data that you think will be appropriate to answer these 2 questions. Use between 4 and 8 functions that we've covered so far (i.e. by filtering, cleaning, tidy'ing, dropping irrelevant columns, etc.).
 
 <!--------------------------- Start your work below --------------------------->
+We will be using the `filter`, and `select`, and the `mutate` function to simplify our dataset and make it easier to answer our research questions. 
+`filter` will remove the NA values from the pets_allowed and emergency_power variables 
+`select` will select the 3 variables needed to answer the two research questions
+`mutate` will add a new variable (apt_age) which will show the age of the apartment.  
 
+```{r}
+New_Apt_Data <- apt_buildings %>% 
+  select(year_built, pets_allowed, property_type, no_of_storeys, no_of_units) %>%
+   filter(!is.na(pets_allowed) & !is.na(property_type) & !is.na(no_of_storeys) &!is.na(no_of_units)) %>%
+  mutate(apt_age=2022-year_built)
+
+print(New_Apt_Data)
+```
 <!----------------------------------------------------------------------------->
 
 # Task 2: Special Data Types (10)
@@ -128,14 +168,48 @@ Now, choose two of the following tasks.
 
 <!-------------------------- Start your work below ---------------------------->
 
-**Task Number**: FILL_THIS_IN
+**Task Number**: 1
 
+First we will use the `fct_reorder` function to create another data frame, with the levels of column `property_type` in *increasing order* of their `no_of_units` and we will store this into a dataset called `New_Apt_Data_Units_Ptp`. In other words, we are reordering the `property_type` according to the `no_of_units`. 
+This may help organize the 3 plots in a more organized fashion based on the number of units, rather than it randomly being displayed. 
+
+```{r}
+New_Apt_Data_Units_Ptp <- New_Apt_Data %>%
+   mutate(property_type = fct_reorder(property_type, no_of_units))
+   
+print(New_Apt_Data_Units_Ptp)
+
+# Plot using the reordered dataset  
+strys_unts_prpty_fctrd <- New_Apt_Data_Units_Ptp %>% 
+  # remove the apartment with <4000 units 
+  filter(no_of_units<4000) %>%
+  ggplot(aes(no_of_storeys, no_of_units)) + facet_wrap(~property_type) + geom_point() + geom_smooth()
+print(strys_unts_prpty_fctrd)
+
+```
 <!----------------------------------------------------------------------------->
 
 <!-------------------------- Start your work below ---------------------------->
 
-**Task Number**: FILL_THIS_IN
+**Task Number**: 2
 
+We can use the `fct_lump_n` function to group the property types besides *Private*. We can do this by including `1` (which specifies that we only want the 1st most frequent property type) following the appropriate column name (*property_type*).
+This simplifies our plot as the *Private* property type took up most of the apartments. 
+```{r}
+New_Apt_Data_Othr_Ptp <- New_Apt_Data %>%
+  #create a new column which has the new groupings of either Private or Other
+    mutate(property_other = fct_lump_n(property_type, 1))
+print(New_Apt_Data_Othr_Ptp)
+
+# Plot using the newly created column "property_other"
+
+strys_unts_prpty_other <- New_Apt_Data_Othr_Ptp %>% 
+  # remove the apartment with <4000 units 
+  filter(no_of_units<4000) %>%
+  ggplot(aes(no_of_storeys, no_of_units)) + facet_wrap(~property_other) + geom_point() + geom_smooth()
+print(strys_unts_prpty_other)
+
+```
 <!----------------------------------------------------------------------------->
 
 # Task 3: Modelling
@@ -146,9 +220,9 @@ Pick a research question, and pick a variable of interest (we'll call it "Y") th
 
 <!-------------------------- Start your work below ---------------------------->
 
-**Research Question**: FILL_THIS_IN
+**Research Question**: *How does property type influence the number of stories in an apartment, and the relationship between stories and units?*
 
-**Variable of interest**: FILL_THIS_IN
+**Variable of interest**: *no_of_storeys*
 
 <!----------------------------------------------------------------------------->
 
@@ -163,7 +237,20 @@ Fit a model or run a hypothesis test that provides insight on this variable with
     -   You could use `lm()` to test for significance of regression.
 
 <!-------------------------- Start your work below ---------------------------->
+Since we are familiar with using something similar to the `lm()` function (using `geom_smooth`) from Milestone 1 and Task 2, we will use the same plot which compares the *no_of_storeys* and *no_of_units* and separates it by *property_type*. 
 
+First we will use the `lm()` function to compare the *no_of_storeys* and *no_of_units*. Then we can use the `geom_smooth` function and specify the `lm` method to display the relationship. 
+```{r}
+lm_storeys_units <- lm(no_of_storeys ~ no_of_units, data = New_Apt_Data_Othr_Ptp)
+
+
+strys_unts_prpty_lm <- New_Apt_Data_Units_Ptp %>% 
+  # remove the apartment with <4000 units 
+  filter(no_of_units<4000) %>%
+  ggplot(aes(no_of_storeys, no_of_units)) + facet_wrap(~property_type) + geom_point() + geom_smooth(method = 'lm')
+print(strys_unts_prpty_lm)
+```
+We can see the power of specifying `lm` as the method within `geom_smooth` if we compare the `strys_unts_prpty_lm` (above) and `strys_unts_prpty_fctrd` (task 1). Specifying `lm` makes the line straight along the points. 
 <!----------------------------------------------------------------------------->
 
 ## 2.2 (5 points)
@@ -175,6 +262,19 @@ Produce something relevant from your fitted model: either predictions on Y, or a
 -   Obtain your results using the `broom` package if possible. If your model is not compatible with the broom function you're needing, then you can obtain your results by some other means, but first indicate which broom function is not compatible.
 
 <!-------------------------- Start your work below ---------------------------->
+We can use the `tidy` function from the `broom` to demonstrate the summary statistics of the from the fitted model (*lm_storeys_units*). This approach is preferred to the `summary` function as the `tidy` function offers a tabular data  representation. This provides summary statistics like the *standard error*
+
+```{r}
+# load the broom package
+library(broom)
+
+#compare using summary and the tidy function
+
+summary(lm_storeys_units)
+tidy(lm_storeys_units)
+
+
+```
 
 <!----------------------------------------------------------------------------->
 
@@ -190,7 +290,19 @@ Take a summary table that you made from Milestone 1 (Task 4.2), and write it as 
 -   **Reproducibility criteria**: You should be able to delete the csv file, and remake it simply by knitting this Rmd file.
 
 <!-------------------------- Start your work below ---------------------------->
+In task 4.2 from Milestone 1, I made a summary table on the Mean, SD, and Median of the Number of Storeys per Property Type named *prprty_typ_smmry*. I will use the `here::here()` function to write it as a csv file in my `output` folder. 
 
+**Property Type Summary - Number of Storeys - Mean, SD, Median:** 
+```{r}
+# mean, sd, median
+prprty_typ_smmry <- apt_buildings %>% 
+  group_by(`property_type`) %>%
+  summarise(storey_mean = mean(no_of_storeys, na.rm = TRUE), storey_sd=sd(no_of_storeys, na.rm= TRUE), storey_median=median(no_of_storeys, na.rm=TRUE))
+print(prprty_typ_smmry)
+
+write_csv(prprty_typ_smmry, file=here::here("output", "prprty_typ_smmry.csv"))
+
+```
 <!----------------------------------------------------------------------------->
 
 ## 3.2 (5 points)
@@ -200,7 +312,17 @@ Write your model object from Task 3 to an R binary file (an RDS), and load it ag
 -   The same robustness and reproducibility criteria as in 3.1 apply here.
 
 <!-------------------------- Start your work below ---------------------------->
+First we will write the model from Task 3 to an R binary file using the `saveRDS()` function and then we can load it again using the `readRDS()` function. 
+```{r}
+# Write the model from Task 3 to an R binary file
 
+saveRDS(lm_storeys_units, file=here::here("output", "lm_storeys_units.rds"))
+
+
+# Load it again
+loaded_lm_storeys_units <- readRDS(file=here::here("output", "lm_storeys_units.rds"))
+summary(loaded_lm_storeys_units)
+```
 <!----------------------------------------------------------------------------->
 
 # Tidy Repository
